@@ -1,29 +1,37 @@
-# Stage 1: Build the application
+# --- ETAPA 1: Construcción (Builder) ---
 FROM node:18-alpine AS builder
 
+# Establecemos el directorio de trabajo
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copiamos solo los archivos de dependencias primero
+# Esto permite cachear las capas de Docker y acelerar futuros builds
 COPY package*.json ./
 
-# Install dependencies
+# Instalamos todas las dependencias
 RUN npm install
 
-# Copy the rest of the application
+# Copiamos el resto del código fuente del proyecto
 COPY . .
 
-# Stage 2: Create the production image
+# --- ETAPA 2: Producción (Runtime) ---
 FROM node:18-alpine
+
+# Definimos el entorno como producción para optimizar librerías (ej. Express, Sharp)
+ENV NODE_ENV=production
 
 WORKDIR /app
 
-# Copy dependencies from the builder stage
+# Copiamos desde la etapa de 'builder' solo lo necesario
+# 1. Los node_modules ya instalados
 COPY --from=builder /app/node_modules ./node_modules
+# 2. Los archivos de configuración de npm
 COPY --from=builder /app/package*.json ./
+# 3. El código fuente y assets
 COPY --from=builder /app .
 
-# Expose the port the app runs on
+# Exponemos el puerto 3000 (el que configuramos en Traefik)
 EXPOSE 3000
 
-# Start the application
+# Comando de inicio
 CMD ["npm", "start"]
