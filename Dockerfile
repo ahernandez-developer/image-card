@@ -20,6 +20,18 @@ FROM node:18-alpine
 # Definimos el entorno como producción para optimizar librerías (ej. Express, Sharp)
 ENV NODE_ENV=production
 
+# --- NUEVA SECCIÓN: Instalación de fuentes ---
+# fontconfig: para gestionar las fuentes
+# ttf-dejavu y font-noto: fuentes estándar de alta calidad
+# font-noto-emoji: para que se vean los emojis si los usas
+RUN apk add --no-cache \
+    fontconfig \
+    ttf-dejavu \
+    font-noto \
+    font-noto-cjk \
+    font-noto-emoji \
+    && fc-cache -f
+
 WORKDIR /app
 
 # Copiamos desde la etapa de 'builder' solo lo necesario

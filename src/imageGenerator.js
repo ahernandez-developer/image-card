@@ -84,7 +84,7 @@ export async function imageGenerator({ headlineText, mainImageUrl, options }) {
             fill: white;
             font-size: ${fontSize}px;
             font-weight: bold;
-            font-family: Arial, sans-serif;
+            font-family: 'DejaVu Sans', 'Noto Sans', sans-serif;
             text-transform: uppercase;
           }
         </style>
